@@ -1,0 +1,223 @@
+STEdgeAI Core v9.0.0-19802
+Created date          : 2024-10-03 19:41:33
+Parameters            : validate --target stm32h7 --name network -m E:/STM32CubeIDE_Projects/models/text_classification_model.tflite --compression high --verbosity 1 --allocate-inputs -O ram --allocate-outputs --workspace C:/Users/steve/AppData/Local/Temp/mxAI_workspace200627685664160013463862336447132954 --output C:/Users/steve/.stm32cubemx/network_output
+
+Exec/report summary (validate)
+--------------------------------------------------------------------------------------------------------------
+model file         :   E:\STM32CubeIDE_Projects\models\text_classification_model.tflite                       
+type               :   tflite                                                                                 
+c_name             :   network                                                                                
+compression        :   high                                                                                   
+options            :   allocate-inputs, allocate-outputs                                                      
+optimization       :   ram                                                                                    
+target/series      :   stm32h7                                                                                
+workspace dir      :   C:\Users\steve\AppData\Local\Temp\mxAI_workspace200627685664160013463862336447132954   
+output dir         :   C:\Users\steve\.stm32cubemx\network_output                                             
+model_fmt          :   float                                                                                  
+model_name         :   text_classification_model                                                              
+model_hash         :   0x23339f3a008238867606936da07eca80                                                     
+params #           :   160,017 items (625.07 KiB)                                                             
+--------------------------------------------------------------------------------------------------------------
+input 1/1          :   'serving_default_embedding_input0', f32(1x1), 4 Bytes, activations                     
+output 1/1         :   'nl_4', f32(1x1), 4 Bytes, activations                                                 
+macc               :   45                                                                                     
+weights (ro)       :   640,068 B (625.07 KiB) (1 segment)                                                     
+activations (rw)   :   68 B (68 B) (1 segment) *                                                              
+ram (total)        :   68 B (68 B) = 68 + 0 + 0                                                               
+--------------------------------------------------------------------------------------------------------------
+(*) 'input'/'output' buffers can be used from the activations buffer
+
+Model name - text_classification_model
+------ --------------------------------------------------------- ---------------- ----------------- ------ ----------------------------------------- --- ------------------- -------------- --------------------- 
+m_id   layer (type,original)                                     oshape           param/size          macc                              connected to   | c_size              c_macc         c_type                
+------ --------------------------------------------------------- ---------------- ----------------- ------ ----------------------------------------- --- ------------------- -------------- --------------------- 
+0      serving_default_embedding_input0 (Input, )                [b:1,c:1]                                                                             |                     +2(+100.0%)    Cast_[0]              
+       cast_0 (Cast, CAST)                                       [b:1,c:1]                               2          serving_default_embedding_input0   |                     -2(-100.0%)    
+------ --------------------------------------------------------- ---------------- ----------------- ------ ----------------------------------------- --- ------------------- -------------- --------------------- 
+1      sequential_embedding_embedding_lookup (Placeholder, )     [h:10000,c:16]   160,000/640,000                                                      | -640,000(-100.0%)                  Gather_[1]            
+       gather_1 (Gather, GATHER)                                 [b:1,h:1,c:16]                                sequential_embedding_embedding_lookup   |                                    
+                                                                                                                                              cast_0   | 
+------ --------------------------------------------------------- ---------------- ----------------- ------ ----------------------------------------- --- ------------------- -------------- --------------------- 
+2      pool_2 (Pool, MEAN)                                       [b:1,h:1,c:16]                         16                                  gather_1   |                                    Pool_[2]              
+       reshape_2_reshape (Reshape, MEAN)                         [b:1,c:16]                                                                   pool_2   |                                    
+------ --------------------------------------------------------- ---------------- ----------------- ------ ----------------------------------------- --- ------------------- -------------- --------------------- 
+3      sequential_dense_MatMul (Placeholder, )                   [b:1,c:16]       16/64                                                                | +4(+6.2%)           +17(+100.0%)   Dense_[3]             
+       sequential_dense_BiasAdd_ReadVariableOp (Placeholder, )   [c:1]            1/4                                                                  | -4(-100.0%)                        
+       gemm_3 (Gemm, FULLY_CONNECTED)                            [b:1,c:1]                              17                         reshape_2_reshape   |                     -17(-100.0%)   
+                                                                                                                             sequential_dense_MatMul   | 
+                                                                                                             sequential_dense_BiasAdd_ReadVariableOp   | 
+------ --------------------------------------------------------- ---------------- ----------------- ------ ----------------------------------------- --- ------------------- -------------- --------------------- 
+4      nl_4 (Nonlinearity, LOGISTIC)                             [b:1,c:1]                              10                                    gemm_3   |                                    Nonlinearity_[o][4]   
+------ --------------------------------------------------------- ---------------- ----------------- ------ ----------------------------------------- --- ------------------- -------------- --------------------- 
+model/c-model: macc=45/45  weights=640,068/640,068  activations=--/68 io=--/0
+
+
+
+Generated C-graph summary
+------------------------------------------------------------------------------------------------------------------------
+model name            : text_classification_model
+c-name                : network
+c-node #              : 5
+c-array #             : 9
+activations size      : 68 (1 segment)
+weights size          : 640068 (1 segment)
+macc                  : 45
+inputs                : ['serving_default_embedding_input0_output']
+outputs               : ['nl_4_output']
+
+C-Arrays (9)
+------ ----------------------------------------- --------------- ------------------------- ------------- --------- 
+c_id   name (*_array)                            item/size       domain/mem-pool           c-type        comment   
+------ ----------------------------------------- --------------- ------------------------- ------------- --------- 
+0      cast_0_output                             1/4             activations/**default**   s32                     
+1      gather_1_output                           16/64           activations/**default**   float                   
+2      gemm_3_bias                               1/4             weights/weights           const float             
+3      gemm_3_output                             1/4             activations/**default**   float                   
+4      gemm_3_weights                            16/64           weights/weights           const float             
+5      nl_4_output                               1/4             activations/**default**   float         /output   
+6      pool_2_output                             16/64           activations/**default**   float                   
+7      sequential_embedding_embedding_lookup     160000/640000   weights/weights           const float             
+8      serving_default_embedding_input0_output   1/4             activations/**default**   float         /input    
+------ ----------------------------------------- --------------- ------------------------- ------------- --------- 
+
+C-Layers (5)
+------ ---------------- ---- --------------- ------ ----- -------------------------------------------- ------------------ 
+c_id   name (*_layer)   id   layer_type      macc   rom   tensors                                      shape (array id)   
+------ ---------------- ---- --------------- ------ ----- -------------------------------------------- ------------------ 
+0      cast_0           0    Cast            2      0     I: serving_default_embedding_input0_output   f32(1x1) (8)       
+                                                          O: cast_0_output                             int32(1x1) (0)     
+------ ---------------- ---- --------------- ------ ----- -------------------------------------------- ------------------ 
+1      gather_1         1    Gather          0      0     I: cast_0_output                             int32(1x1) (0)     
+                                                          O: gather_1_output                           f32(1x1x16) (1)    
+------ ---------------- ---- --------------- ------ ----- -------------------------------------------- ------------------ 
+2      pool_2           2    Pool            16     0     I: gather_1_output                           f32(1x1x16) (1)    
+                                                          O: pool_2_output                             f32(1x1x16) (6)    
+------ ---------------- ---- --------------- ------ ----- -------------------------------------------- ------------------ 
+3      gemm_3           3    Dense           17     68    I: pool_2_output                             f32(1x1x16) (6)    
+                                                          W: gemm_3_weights                            f32(1x16) (4)      
+                                                          W: gemm_3_bias                               f32(1) (2)         
+                                                          O: gemm_3_output                             f32(1x1) (3)       
+------ ---------------- ---- --------------- ------ ----- -------------------------------------------- ------------------ 
+4      nl_4             4    Nonlinearity    10     0     I: gemm_3_output                             f32(1x1) (3)       
+                                                          O: nl_4_output                               f32(1x1) (5)       
+------ ---------------- ---- --------------- ------ ----- -------------------------------------------- ------------------ 
+ 
+Setting validation data...
+ generating random data, size=10, seed=42, range=(0, 1)
+ I[1]: (10, 1, 1, 1)/float32, min/max=[0.058, 0.951], mean/std=[0.520, 0.300], serving_default_embedding_input0
+ No output/reference samples are provided
+ 
+Running the STM AI c-model (AI RUNNER)...(name=network, mode=HOST)
+
+ X86 shared lib (C:\Users\steve\AppData\Local\Temp\mxAI_workspace200627685664160013463862336447132954\inspector_network\workspace\lib\libai_network.dll) ['network']
+  
+  Summary 'network' - ['network']
+  ------------------------------------------------------------------------------------------
+  inputs/ouputs      :   1/1                                                                
+  input_1            :   f32[1,1,1,1], 4 Bytes, in activations buffer                       
+  output_1           :   f32[1,1,1,1], 4 Bytes, in activations buffer                       
+  n_nodes            :   5                                                                  
+  compile_datetime   :   Oct  3 2024 19:41:31                                               
+  activations        :   68                                                                 
+  weights            :   640068                                                             
+  macc               :   45                                                                 
+  ------------------------------------------------------------------------------------------
+  tools              :   Legacy ST.AI 9.0.0                                                 
+  capabilities       :   IO_ONLY, PER_LAYER, PER_LAYER_WITH_DATA                            
+  device             :   AMD64, AMD64 Family 23 Model 8 Stepping 2, AuthenticAMD, Windows   
+  ------------------------------------------------------------------------------------------
+ 
+ NOTE: duration and exec time per layer is just an indication. They are dependent of the HOST-machine work-load.
+
+  
+  ST.AI Profiling results v1.2 - "network"
+  ------------------------------------------------------------
+  nb sample(s)   :   10                                       
+  duration       :   0.012 ms by sample (0.002/0.080/0.023)   
+  macc           :   45                                       
+  ------------------------------------------------------------
+   
+   Inference time per node
+   ---------------------------------------------------------------------------
+   c_id    m_id   type               dur (ms)       %   cumul     name        
+   ---------------------------------------------------------------------------
+   0       0      Cast (0x121)          0.002   19.7%   19.7%     ai_node_0   
+   1       1      Gather (0x11c)        0.002   17.1%   36.8%     ai_node_1   
+   2       2      Pool (0x10b)          0.002   12.8%   49.6%     ai_node_2   
+   3       3      Dense (0x104)         0.003   22.2%   71.8%     ai_node_3   
+   4       4      NL (0x107)            0.002   20.5%   92.3%     ai_node_4   
+   ---------------------------------------------------------------------------
+   total                                0.011                                 
+   ---------------------------------------------------------------------------
+   
+   Statistic per tensor
+   -------------------------------------------------------------------------------
+   tensor   #    type[shape]:size       min     max     mean      std  name       
+   -------------------------------------------------------------------------------
+   I.0      10   f32[1,1,1,1]:4       0.058   0.951    0.520    0.300  input_1    
+   O.0      10   f32[1,1,1,1]:4       0.504   0.504    0.504    0.000  output_1   
+   -------------------------------------------------------------------------------
+ 
+Saving validation data...
+ output directory: C:\Users\steve\.stm32cubemx\network_output
+ creating C:\Users\steve\.stm32cubemx\network_output\network_val_io.npz
+ m_outputs_1: (10, 1, 1, 1)/float32, min/max=[0.504, 0.504], mean/std=[0.504, 0.000], nl_4
+ c_outputs_1: (10, 1, 1, 1)/float32, min/max=[0.504, 0.504], mean/std=[0.504, 0.000], nl_4
+
+ 
+Computing the metrics...
+
+ Cross accuracy report #1 (reference vs C-model)
+ ----------------------------------------------------------------------------------------------------
+ notes: - the output of the reference model is used as ground truth/reference value
+        - 10 samples (1 items per sample)
+
+  acc=n.a., rmse=0.000000000, mae=0.000000000, l2r=0.000000000, nse=1.000, cos=1.000
+
+
+Number of operations per c-layer
+------- ------ --------------------- ----- -------------- 
+c_id    m_id   name (type)             #op           type 
+------- ------ --------------------- ----- -------------- 
+0       0      cast_0 (Cast)             2   smul_f32_s32 
+1       1      gather_1 (Gather)         0   smul_s32_f32 
+2       2      pool_2 (Pool)            16   smul_f32_f32 
+3       3      gemm_3 (Dense)           17   smul_f32_f32 
+4       4      nl_4 (Nonlinearity)      10     op_f32_f32 
+------- ------ --------------------- ----- -------------- 
+total                                   45 
+
+Number of operation types
+---------------- ---- ----------- 
+operation type      #           % 
+---------------- ---- ----------- 
+smul_f32_s32        2        4.4% 
+smul_s32_f32        0        0.0% 
+smul_f32_f32       33       73.3% 
+op_f32_f32         10       22.2% 
+
+Complexity report (model)
+------ --------------------------------------- ------------------------- ------------------------- ------ -------- ------------------ 
+m_id   name                                    c_macc                    c_rom                     c_id   c_dur    rmse (X-CROSS)     
+------ --------------------------------------- ------------------------- ------------------------- ------ -------- ------------------ 
+0      serving_default_embedding_input0        ||                 4.4%   |                  0.0%   [0]     14.3%                      
+1      sequential_embedding_embedding_lookup   |                  0.0%   |                  0.0%   [1]     17.9%                      
+2      pool_2                                  |||||||||||||||   35.6%   |                  0.0%   [2]     14.3%                      
+3      sequential_dense_MatMul                 ||||||||||||||||  37.8%   ||||||||||||||||   0.0%   [3]     25.0%                      
+4      nl_4                                    |||||||||         22.2%   |                  0.0%   [4]     28.6%   0.00000000e+00 *   
+------ --------------------------------------- ------------------------- ------------------------- ------ -------- ------------------ 
+macc=45 weights=640,068 act=68 ram_io=0
+
+Evaluation report (summary)
+-------------------------------------------------------------------------------------------------------------------------------
+Output       acc    rmse        mae         l2r         mean        std         nse         cos         tensor                 
+-------------------------------------------------------------------------------------------------------------------------------
+X-cross #1   n.a.   0.0000000   0.0000000   0.0000000   0.0000000   0.0000000   1.0000000   1.0000000   nl_4, (1,), m_id=[4]   
+-------------------------------------------------------------------------------------------------------------------------------
+
+ acc  : Classification accuracy (all classes)
+ rmse : Root Mean Squared Error
+ mae  : Mean Absolute Error
+ l2r  : L2 relative error
+ nse  : Nash-Sutcliffe efficiency criteria, bigger is better, best=1, range=(-inf, 1]
+ cos  : COsine Similarity, bigger is better, best=1, range=(0, 1]

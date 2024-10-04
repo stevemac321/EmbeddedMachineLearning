@@ -1,0 +1,145 @@
+ST Edge AI Core v1.0.0-19894
+Created date          : 2024-10-04 11:44:10
+Parameters            : generate --target stm32h7 --name network -m E:/STM32CubeIDE_Projects/models/text_classification_dense_input.h5 --compression none --verbosity 1 --allocate-inputs --allocate-outputs --workspace C:/Users/steve/AppData/Local/Temp/mxAI_workspace399034056517005986360016937429703 --output C:/Users/steve/.stm32cubemx/network_output
+
+Exec/report summary (generate)
+-----------------------------------------------------------------------------------------------------------
+model file         :   E:\STM32CubeIDE_Projects\models\text_classification_dense_input.h5                  
+type               :   keras                                                                               
+c_name             :   network                                                                             
+compression        :   none                                                                                
+options            :   allocate-inputs, allocate-outputs                                                   
+optimization       :   balanced                                                                            
+target/series      :   stm32h7                                                                             
+workspace dir      :   C:\Users\steve\AppData\Local\Temp\mxAI_workspace399034056517005986360016937429703   
+output dir         :   C:\Users\steve\.stm32cubemx\network_output                                          
+model_fmt          :   float                                                                               
+model_name         :   text_classification_dense_input                                                     
+model_hash         :   0xc908cf319233aed1b585acf9a2b6d08a                                                  
+params #           :   1,185 items (4.63 KiB)                                                              
+-----------------------------------------------------------------------------------------------------------
+input 1/1          :   'input_1', f32(1x1), 4 Bytes, activations                                           
+output 1/1         :   'dense_2', f32(1x1), 4 Bytes, activations                                           
+macc               :   1,259                                                                               
+weights (ro)       :   4,740 B (4.63 KiB) (1 segment)                                                      
+activations (rw)   :   320 B (320 B) (1 segment) *                                                         
+ram (total)        :   320 B (320 B) = 320 + 0 + 0                                                         
+-----------------------------------------------------------------------------------------------------------
+(*) 'input'/'output' buffers can be used from the activations buffer
+
+Model name - text_classification_dense_input
+------ ------------------------------- ------------ ------------- ------- --------------- --- -------- -------------- ------------------------------- 
+m_id   layer (type,original)           oshape       param/size       macc    connected to   | c_size   c_macc         c_type                          
+------ ------------------------------- ------------ ------------- ------- --------------- --- -------- -------------- ------------------------------- 
+0      input_1 (Input, InputLayer)     [b:1,c:1]                                            |                         
+------ ------------------------------- ------------ ------------- ------- --------------- --- -------- -------------- ------------------------------- 
+1      dense (Dense, Dense)            [b:1,c:16]   32/128             32         input_1   |                         Dense_[0]                       
+------ ------------------------------- ------------ ------------- ------- --------------- --- -------- -------------- ------------------------------- 
+2      flatten (Reshape, Flatten)      [b:1,c:16]                                   dense   |                         
+------ ------------------------------- ------------ ------------- ------- --------------- --- -------- -------------- ------------------------------- 
+3      dense_1_dense (Dense, Dense)    [b:1,c:64]   1,088/4,352     1,088         flatten   |          +64(+5.9%)     Dense_/Nonlinearity_[1, 2]      
+       dense_1 (Nonlinearity, Dense)   [b:1,c:64]                      64   dense_1_dense   |          -64(-100.0%)   
+------ ------------------------------- ------------ ------------- ------- --------------- --- -------- -------------- ------------------------------- 
+4      dense_2_dense (Dense, Dense)    [b:1,c:1]    65/260             65         dense_1   |          +10(+15.4%)    Dense_/Nonlinearity_[o][3, 4]   
+       dense_2 (Nonlinearity, Dense)   [b:1,c:1]                       10   dense_2_dense   |          -10(-100.0%)   
+------ ------------------------------- ------------ ------------- ------- --------------- --- -------- -------------- ------------------------------- 
+model/c-model: macc=1,259/1,259  weights=4,740/4,740  activations=--/320 io=--/0
+
+
+
+Generated C-graph summary
+------------------------------------------------------------------------------------------------------------------------
+model name            : text_classification_dense_input
+c-name                : network
+c-node #              : 5
+c-array #             : 12
+activations size      : 320 (1 segment)
+weights size          : 4740 (1 segment)
+macc                  : 1259
+inputs                : ['input_1_output']
+outputs               : ['dense_2_output']
+
+C-Arrays (12)
+------ ----------------------- ----------- ------------------------- ------------- --------- 
+c_id   name (*_array)          item/size   domain/mem-pool           c-type        comment   
+------ ----------------------- ----------- ------------------------- ------------- --------- 
+0      dense_1_dense_bias      64/256      weights/weights           const float             
+1      dense_1_dense_output    64/256      activations/**default**   float                   
+2      dense_1_dense_weights   1024/4096   weights/weights           const float             
+3      dense_1_output          64/256      activations/**default**   float                   
+4      dense_2_dense_bias      1/4         weights/weights           const float             
+5      dense_2_dense_output    1/4         activations/**default**   float                   
+6      dense_2_dense_weights   64/256      weights/weights           const float             
+7      dense_2_output          1/4         activations/**default**   float         /output   
+8      dense_bias              16/64       weights/weights           const float             
+9      dense_output            16/64       activations/**default**   float                   
+10     dense_weights           16/64       weights/weights           const float             
+11     input_1_output          1/4         activations/**default**   float         /input    
+------ ----------------------- ----------- ------------------------- ------------- --------- 
+
+C-Layers (5)
+------ ---------------- ---- --------------- ------ ------ -------------------------- ------------------ 
+c_id   name (*_layer)   id   layer_type      macc   rom    tensors                    shape (array id)   
+------ ---------------- ---- --------------- ------ ------ -------------------------- ------------------ 
+0      dense            1    Dense           32     128    I: input_1_output          f32(1x1) (11)      
+                                                           W: dense_weights           f32(16x1) (10)     
+                                                           W: dense_bias              f32(16) (8)        
+                                                           O: dense_output            f32(1x16) (9)      
+------ ---------------- ---- --------------- ------ ------ -------------------------- ------------------ 
+1      dense_1_dense    3    Dense           1088   4352   I: dense_output            f32(1x16) (9)      
+                                                           W: dense_1_dense_weights   f32(64x16) (2)     
+                                                           W: dense_1_dense_bias      f32(64) (0)        
+                                                           O: dense_1_dense_output    f32(1x64) (1)      
+------ ---------------- ---- --------------- ------ ------ -------------------------- ------------------ 
+2      dense_1          3    Nonlinearity    64     0      I: dense_1_dense_output    f32(1x64) (1)      
+                                                           O: dense_1_output          f32(1x64) (3)      
+------ ---------------- ---- --------------- ------ ------ -------------------------- ------------------ 
+3      dense_2_dense    4    Dense           65     260    I: dense_1_output          f32(1x64) (3)      
+                                                           W: dense_2_dense_weights   f32(1x64) (6)      
+                                                           W: dense_2_dense_bias      f32(1) (4)         
+                                                           O: dense_2_dense_output    f32(1x1) (5)       
+------ ---------------- ---- --------------- ------ ------ -------------------------- ------------------ 
+4      dense_2          4    Nonlinearity    10     0      I: dense_2_dense_output    f32(1x1) (5)       
+                                                           O: dense_2_output          f32(1x1) (7)       
+------ ---------------- ---- --------------- ------ ------ -------------------------- ------------------ 
+
+
+
+Number of operations per c-layer
+------- ------ ------------------------ ------- -------------- 
+c_id    m_id   name (type)                  #op           type 
+------- ------ ------------------------ ------- -------------- 
+0       1      dense (Dense)                 32   smul_f32_f32 
+1       3      dense_1_dense (Dense)      1,088   smul_f32_f32 
+2       3      dense_1 (Nonlinearity)        64     op_f32_f32 
+3       4      dense_2_dense (Dense)         65   smul_f32_f32 
+4       4      dense_2 (Nonlinearity)        10     op_f32_f32 
+------- ------ ------------------------ ------- -------------- 
+total                                     1,259 
+
+Number of operation types
+---------------- ------- ----------- 
+operation type         #           % 
+---------------- ------- ----------- 
+smul_f32_f32       1,185       94.1% 
+op_f32_f32            74        5.9% 
+
+Complexity report (model)
+------ --------------- ------------------------- ------------------------- -------- 
+m_id   name            c_macc                    c_rom                     c_id     
+------ --------------- ------------------------- ------------------------- -------- 
+1      dense           |                  2.5%   |                  2.7%   [0]      
+3      dense_1_dense   ||||||||||||||||  91.5%   ||||||||||||||||  91.8%   [1, 2]   
+4      dense_2_dense   |                  6.0%   |                  5.5%   [3, 4]   
+------ --------------- ------------------------- ------------------------- -------- 
+macc=1,259 weights=4,740 act=320 ram_io=0
+
+Generated files (7)
+------------------------------------------------------------------ 
+C:\Users\steve\.stm32cubemx\network_output\network_data_params.h   
+C:\Users\steve\.stm32cubemx\network_output\network_data_params.c   
+C:\Users\steve\.stm32cubemx\network_output\network_data.h          
+C:\Users\steve\.stm32cubemx\network_output\network_data.c          
+C:\Users\steve\.stm32cubemx\network_output\network_config.h        
+C:\Users\steve\.stm32cubemx\network_output\network.h               
+C:\Users\steve\.stm32cubemx\network_output\network.c               
