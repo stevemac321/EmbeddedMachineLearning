@@ -27,6 +27,12 @@ This project demonstrates the integration of an **STM32 X-Cube-AI** project with
   - [Graphviz](https://graphviz.gitlab.io/download/) for generating diagrams with Doxygen.
   - [Terminal](https://sites.google.com/site/terminalbpp/) or a similar serial port reader for viewing output through the ST-Link Virtual Port.
 
+### Model Modification and Setup
+
+The original model used in the TensorFlow text classification tutorial included an **embedding layer**, which was not compatible with the STM32 X-Cube-AI framework. To resolve this, the model was modified to use a **dense-only architecture**. The resulting `text_classification_dense_input.h5` model was then imported into STM32CubeIDE using the X-Cube-AI plugin.
+
+The modification involved mapping the text inputs directly to float values (`0.8`, `0.5`, `0.2`) using the Python script `run_inference.py` to ensure consistent input features. This approach allowed us to achieve the same inference results as the original Python model without needing complex embedding or tokenization processes on the STM32 platform.
+
 ### Project Structure
 
 - **Root Directory**:
