@@ -4,6 +4,9 @@
 
 This project demonstrates the integration of an **STM32 X-Cube-AI** project with the **TensorFlow Text Classification** model. It uses the `text_classification_dense_input.h5` model and `run_inference.py` script to verify the parity of inference results between the STM32 environment and a Python environment.
 
+NOTE: With regards to the anomaly detection itself, this example is hit and miss, the training and inference data is very simplistic.  The focus is on the end to end experience.
+NOTE: in the slides, I forgot to mention that you need the training_data.c that has very simplistic training data.
+
 ### References
 
 1. **TensorFlow Text Classification Tutorial**: The model used in this project is based on the text classification tutorial provided by TensorFlow. You can find more details and explore the tutorial [here](https://www.tensorflow.org/tutorials/keras/text_classification).
