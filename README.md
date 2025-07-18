@@ -1,6 +1,6 @@
 # Embedded Machine Learning Project - STM32 X-Cube-AI Integration 
 
->>(there is an upgrade version see: https://github.com/stevemac321/5_Class_Embedded_Keras)
+>>(there is an upgrade version see: https://github.com/stevemac321/5_Class_Embedded_Keras, Video wall-thru: https://youtu.be/8EbgY_wZ5Qs)
 
 ## Overview
 
